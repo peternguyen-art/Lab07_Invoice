@@ -1,21 +1,56 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Invoice {
-    String title = "";
-    double totalAmountDue = 0;
+    private String title;
+    private double totalAmtDue;
+    private Customer customer;
+    private List<LineItem> lineItems;
 
-    public Invoice(String title, double totalAmountDue) {
+    public Invoice(String title, Customer customer) {
         this.title = title;
-        this.totalAmountDue = totalAmountDue;
+        this.customer = customer;
+        this.lineItems = new ArrayList<>();
+        this.totalAmtDue = 0.0;
     }
 
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
+    public void addLineItem(LineItem item) {
+        lineItems.add(item);
+        recalculateTotal();
     }
 
-    public double getTotalAmountDue() {
-        return totalAmountDue;
+    public double getTotalAmtDue() {
+        return totalAmtDue;
     }
 
+    public void recalculateTotal() {
+        this.totalAmtDue = 0.0;
+        for (LineItem item : lineItems) {
+            this.totalAmtDue += item.getCalculatedTotal();
+        }
+    }
+
+    public String generateInvoiceText() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("=========================================\n");
+        sb.append(String.format("%20s\n", title.toUpperCase()));
+        sb.append("-----------------------------------------\n");
+        sb.append(customer.getCustomerBlock()).append("\n");
+        sb.append("=========================================\n");
+
+        sb.append(String.format("%-15s %-5s %-8s %s\n", "Item", "Qty", "Price", "Total"));
+        sb.append("-----------------------------------------\n");
+
+        for (LineItem item : lineItems) {
+            sb.append(item.getLineItemString()).append("\n");
+        }
+
+        sb.append("=========================================\n");
+
+        sb.append(String.format("%-28s $%.2f\n", "AMOUNT DUE:", totalAmtDue));
+        sb.append("=========================================\n");
+
+        return sb.toString();
+    }
 }

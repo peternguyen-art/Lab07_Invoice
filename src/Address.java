@@ -13,7 +13,6 @@ public class Address {
         this.zip = zip;
     }
 
-    // Method from UML: getFormattedAddress()
     public String getFormattedAddress() {
         String aptPart = apt.isEmpty() ? "" : apt + " ";
         return street + "\n" + aptPart + city + ", " + state + " " + zip;
